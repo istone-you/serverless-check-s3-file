@@ -1,0 +1,26 @@
+service: check-sakuratoaws-file
+
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: ap-northeast-1
+  deploymentBucket:
+    name: ${env:SERVERLESS_DEPLOY_BUCKET_NAME}
+  iam:
+    role:
+      managedPolicies:
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+
+functions:
+  function:
+    handler: index.lambda_handler
+    events:
+      - schedule: rate(15 minutes)
+    environment:
+      BUCKET_NAME: ${env:BUCKET_NAME}
+      INVOKE_TIME_INTERVAL: ${env:INVOKE_TIME_INTERVAL}
+      OBJECT_PREFIX: ${env:OBJECT_PREFIX}
